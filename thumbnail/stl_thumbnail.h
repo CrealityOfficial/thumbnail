@@ -1,8 +1,8 @@
 #pragma once
-#include "exporter.h"
+#include "thumbnail/exporter.h"
 #include <string>
-#include "vec3.h"
-#include "vec4.h"
+#include "thumbnail/vec3.h"
+#include "thumbnail/vec4.h"
 
 //int STLThumbnail(const char* stl_file_path, const char* thumbnail_file_path,
 //                 size_t thumbnail_width, size_t thumbnail_height, const char* bg_file_path, int depth);

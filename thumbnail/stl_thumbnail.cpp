@@ -4,7 +4,7 @@
 #include "stl/parser.h"
 #include "picture.h"
 #include "cxbin/load.h"
-#include "../cxalarm/tracer.h"
+#include "cxbin/convert.h"
 #include "trimesh2/TriMesh.h"
 
 //int STLThumbnail(const char* stl_file_path, const char* thumbnail_file_path,
@@ -231,9 +231,17 @@ int STLThumbnail(const std::string& stl_file_path, const std::string& thumbnail_
 //    rasterConfig.viewDir = Vec3(-1.0f, -1.0f, -1.0f);
 //    rasterConfig.viewRight = Vec3(1.0f, -1.0f, 0.0f);
 
+    stl::Parser stl_parser;
+    stl_parser.setCalculateVolume(false);
     Mesh mesh;
-    CaseTracer tracer("cxbin::LoadT");
-    std::vector<trimesh::TriMesh*> meshs = cxbin::loadT(raster_config.input, &tracer);
+
+    std::vector<trimesh::TriMesh*> meshs = cxbin::loadT(raster_config.input, nullptr);
+    if (0== meshs.size())
+    {
+		//std::cout << "mesh is null." << std::endl;
+		return -1;
+    }
+    
     for (trimesh::TriMesh* aMesh : meshs)
     {
 		for (size_t i = 0; i < aMesh->faces.size(); i++)
@@ -258,6 +266,13 @@ int STLThumbnail(const std::string& stl_file_path, const std::string& thumbnail_
             mesh.push_back(atriangle);
 		}
     }
+    cxbin::release(meshs);
+
+    //    if (stl_parser.parseFile(mesh, raster_config.input) != 0)
+    //    {
+    ////        std::cout << "parse stl file " << rasterConfig.input << " failed." << std::endl;
+    //        return -1;
+    //    }
 
     if (0 == mesh.size())
     {

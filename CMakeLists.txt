@@ -4,37 +4,48 @@ if(NOT GLM_INCLUDE_DIRS)
 	message(FATAL_ERROR "GLM_INCLUDE_DIRS Missing")
 endif()
 
-set(LIBS png cxbin trimesh2 cxalarm)
+set(LIBS png cxbin trimesh2)
 set(INCS ${GLM_INCLUDE_DIRS})
 set(DEFS GLM_FORCE_LEFT_HANDED THUMBNAIL_DLL)
 
 __add_real_target(thumbnail dll SOURCE
-									stl/helpers.h
-									stl/parser.h
-									stl/parser.cpp
-									picture.cpp
-									picture.h
-									aabb.cpp
-									aabb.h
-									helper.cpp
-									helper.h
-									vec3.h
-									vec4.h
-									triangle.h
-									raster_backend/raster.cpp
-									raster_backend/raster.h
-									raster_backend/rasterconfig.cpp
-									raster_backend/rasterconfig.h
-									raster_backend/zbuffer.cpp
-									raster_backend/zbuffer.h
-									topomesh.h
-									topomesh.cpp
-									stl_thumbnail.h
-									stl_thumbnail.cpp
+									thumbnail/stl/helpers.h
+									thumbnail/stl/parser.h
+									thumbnail/stl/parser.cpp
+									thumbnail/picture.cpp
+									thumbnail/picture.h
+									thumbnail/aabb.cpp
+									thumbnail/aabb.h
+									thumbnail/helper.cpp
+									thumbnail/helper.h
+									thumbnail/vec3.h
+									thumbnail/vec4.h
+									thumbnail/triangle.h
+									thumbnail/raster_backend/raster.cpp
+									thumbnail/raster_backend/raster.h
+									thumbnail/raster_backend/rasterconfig.cpp
+									thumbnail/raster_backend/rasterconfig.h
+									thumbnail/raster_backend/zbuffer.cpp
+									thumbnail/raster_backend/zbuffer.h
+									thumbnail/topomesh.h
+									thumbnail/topomesh.cpp
+									thumbnail/stl_thumbnail.h
+									thumbnail/stl_thumbnail.cpp
+									thumbnail/thumbnail.h
+									thumbnail/thumbnail.cpp
 								LIB ${LIBS}
 								INC ${INCS}
 								DEF ${DEFS}
 								INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
 								)
 
-
+if(INSTALL_THUMBNAIL)
+	INSTALL(TARGETS thumbnail
+					LIBRARY DESTINATION lib
+					ARCHIVE DESTINATION .
+					RUNTIME DESTINATION bin)
+			
+	INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/thumbnail/stl_thumbnail.h
+				${CMAKE_CURRENT_SOURCE_DIR}/thumbnail/export.h 
+				DESTINATION ${CMAKE_INSTALL_PREFIX}/include/thumbnail/)
+endif()

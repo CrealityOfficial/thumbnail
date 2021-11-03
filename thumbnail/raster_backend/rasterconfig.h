@@ -1,8 +1,8 @@
 #ifndef _NULLSPACE_RASTERCONFIG_1589000611373_H
 #define _NULLSPACE_RASTERCONFIG_1589000611373_H
 
-#include "vec3.h"
-#include "vec4.h"
+#include "thumbnail/vec3.h"
+#include "thumbnail/vec4.h"
 #include <string>
 
 class RasterConfig

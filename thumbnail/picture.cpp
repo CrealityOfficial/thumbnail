@@ -193,6 +193,11 @@ void Picture::setRGB(size_t x, size_t y, float r, float g, float b, float a)
     setRGB(x, y, floatToByte(r), floatToByte(g), floatToByte(b), floatToByte(a));
 }
 
+void Picture::copyto(unsigned char* data)
+{
+    memcpy(data, buffer_.data(), width_ * height_ * 4);
+}
+
 void Picture::fill(float r, float g, float b, float a)
 {
     for (size_t y = 0; y < height_; ++y)

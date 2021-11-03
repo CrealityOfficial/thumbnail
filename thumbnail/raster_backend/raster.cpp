@@ -1,11 +1,11 @@
 #include "raster.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "picture.h"
+#include "thumbnail/picture.h"
 #include "rasterconfig.h"
 #include "zbuffer.h"
-#include "aabb.h"
-#include "helper.h"
+#include "thumbnail/aabb.h"
+#include "thumbnail/helper.h"
 
 Raster::Raster()
 {

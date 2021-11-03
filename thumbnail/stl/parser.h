@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <math.h>
 #include <string>
-#include "triangle.h"
-#include "vec3.h"
+#include "thumbnail/triangle.h"
+#include "thumbnail/vec3.h"
 
 namespace stl
 {
