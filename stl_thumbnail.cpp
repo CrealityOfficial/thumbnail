@@ -3,6 +3,9 @@
 #include "raster_backend/raster.h"
 #include "stl/parser.h"
 #include "picture.h"
+#include "cxbin/load.h"
+#include "../cxalarm/tracer.h"
+#include "trimesh2/TriMesh.h"
 
 //int STLThumbnail(const char* stl_file_path, const char* thumbnail_file_path,
 //                 size_t thumbnail_width, size_t thumbnail_height, const char* thumbnail_bg_file_path, int depth)
@@ -232,15 +235,49 @@ int STLThumbnail(const std::string& stl_file_path, const std::string& thumbnail_
     stl_parser.setCalculateVolume(false);
     Mesh mesh;
 
-    if (stl_parser.parseFile(mesh, raster_config.input) != 0)
+    CaseTracer tracer("cxbin::LoadT");
+    std::vector<trimesh::TriMesh*> meshs = cxbin::loadT(raster_config.input, &tracer);
+    if (0== meshs.size())
     {
-//        std::cout << "parse stl file " << rasterConfig.input << " failed." << std::endl;
-        return -1;
+		//std::cout << "mesh is null." << std::endl;
+		return -1;
     }
+    
+    for (trimesh::TriMesh* aMesh : meshs)
+    {
+		for (size_t i = 0; i < aMesh->faces.size(); i++)
+		{
+            int index0 = aMesh->faces[i].at(0);
+            int index1 = aMesh->faces[i].at(1);
+            int index2 = aMesh->faces[i].at(2);
+            Triangle atriangle;
+            atriangle.vertices.at(0).x = aMesh->vertices[index0].at(0);
+            atriangle.vertices.at(0).y = aMesh->vertices[index0].at(1);
+            atriangle.vertices.at(0).z = aMesh->vertices[index0].at(2);
+            
+			atriangle.vertices.at(1).x = aMesh->vertices[index1].at(0);
+			atriangle.vertices.at(1).y = aMesh->vertices[index1].at(1);
+			atriangle.vertices.at(1).z = aMesh->vertices[index1].at(2);
+
+			atriangle.vertices.at(2).x = aMesh->vertices[index2].at(0);
+			atriangle.vertices.at(2).y = aMesh->vertices[index2].at(1);
+			atriangle.vertices.at(2).z = aMesh->vertices[index2].at(2);
+            atriangle.normal = atriangle.calcNormal();
+            atriangle.normal.normalized();
+            mesh.push_back(atriangle);
+		}
+    }
+
+
+        if (stl_parser.parseFile(mesh, raster_config.input) != 0)
+        {
+    //        std::cout << "parse stl file " << rasterConfig.input << " failed." << std::endl;
+            return -1;
+        }
 
     if (0 == mesh.size())
     {
-//        std::cout << "mesh is null." << std::endl;
+        //std::cout << "mesh is null." << std::endl;
         return -1;
     }
 
