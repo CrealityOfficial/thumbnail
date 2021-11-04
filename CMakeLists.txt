@@ -46,6 +46,8 @@ if(INSTALL_THUMBNAIL)
 					RUNTIME DESTINATION bin)
 			
 	INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/thumbnail/stl_thumbnail.h
-				${CMAKE_CURRENT_SOURCE_DIR}/thumbnail/exporter.h 
+				${CMAKE_CURRENT_SOURCE_DIR}/thumbnail/exporter.h
+				${CMAKE_CURRENT_SOURCE_DIR}/thumbnail/vec3.h 
+				${CMAKE_CURRENT_SOURCE_DIR}/thumbnail/vec4.h 				
 				DESTINATION ${CMAKE_INSTALL_PREFIX}/include/thumbnail/)
 endif()
