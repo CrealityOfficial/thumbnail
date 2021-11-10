@@ -97,12 +97,11 @@ void thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, unsigned c
 	thumbnail_trimeshes(meshes, width, height, data);
 }
 
-bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, const char* filePath)
+bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, int model_color_idx,const char* filePath)
 {
     if (width <= 0 || height <= 0 || !filePath)
         return false;
-    int model_color_idx = 1;
-    if (model_color_idx < 0 || model_color_idx >= (int)(sizeof(model_colors) / sizeof(Vec3)))
+      if (model_color_idx < 0 || model_color_idx >= (int)(sizeof(model_colors) / sizeof(Vec3)))
     {
         model_color_idx = rand() % 5;
     }
@@ -137,7 +136,7 @@ bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width,
     }
     return true;
 }
-bool  thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, const char* filePath)
+bool  thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, int model_color_idx, const char* filePath)
 {
-    return thumbnail_trimeshs({ mesh }, width, height, filePath);
+    return thumbnail_trimeshs({ mesh }, width, height, model_color_idx,filePath);
 }
