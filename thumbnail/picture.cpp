@@ -184,7 +184,7 @@ int Picture::save(const std::string& file_path)
     png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(fp);
 
-    compress(file_path);
+    //compress(file_path);
     return 0;
 }
 
