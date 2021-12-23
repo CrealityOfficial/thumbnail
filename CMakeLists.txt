@@ -51,3 +51,7 @@ if(INSTALL_THUMBNAIL)
 				${CMAKE_CURRENT_SOURCE_DIR}/thumbnail/vec4.h 				
 				DESTINATION ${CMAKE_INSTALL_PREFIX}/include/thumbnail/)
 endif()
+
+if(CC_INSTALL_THUMBNAIL)
+	__install_directory_specif(${CMAKE_CURRENT_SOURCE_DIR} thumbnail)
+endif()
