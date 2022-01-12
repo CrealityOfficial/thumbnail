@@ -3,6 +3,7 @@
 #include "raster_backend/raster.h"
 #include "picture.h"
 #include "trimesh2/TriMesh.h"
+#include"img2gcode.h"
 static Vec3 model_colors[] =
 {
     {0x42 / 255.f, 0xB5 / 255.f, 1.0f}, // Ç³À¶
@@ -139,4 +140,14 @@ bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width,
 bool  thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, int model_color_idx, const char* filePath)
 {
     return thumbnail_trimeshs({ mesh }, width, height, model_color_idx,filePath);
+}
+
+bool thumbnail_to_gcode(const char* infilePath, const int inImgSizes, const std::string& inImgFormat, const int& inlayerCount, std::string& outGcodeStr)
+{
+    if (!infilePath) return false;
+    
+}
+bool thumbnail_to_gcode(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat, const int& inlayerCount, std::vector<std::string>& outGcodeStr)
+{
+   return  Img2Gcode::imgEncode(inPrevData,outGcodeStr,inImgSizes, inImgFormat, inlayerCount, nullptr);
 }

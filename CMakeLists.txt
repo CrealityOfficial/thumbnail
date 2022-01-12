@@ -5,7 +5,7 @@ if(NOT GLM_INCLUDE_DIRS)
 	message(FATAL_ERROR "GLM_INCLUDE_DIRS Missing")
 endif()
 
-set(LIBS zlib png cxbin trimesh2)
+set(LIBS png cxbin trimesh2 zlib)
 set(INCS ${GLM_INCLUDE_DIRS})
 set(DEFS GLM_FORCE_LEFT_HANDED THUMBNAIL_DLL)
 
@@ -34,6 +34,8 @@ __add_real_target(thumbnail dll SOURCE
 									thumbnail/stl_thumbnail.cpp
 									thumbnail/thumbnail.h
 									thumbnail/thumbnail.cpp
+									thumbnail/img2gcode.cpp
+									thumbnail/img2gcode.h
 								LIB ${LIBS}
 								INC ${INCS}
 								DEF ${DEFS}
@@ -54,5 +56,5 @@ if(INSTALL_THUMBNAIL)
 endif()
 
 if(CC_INSTALL_THUMBNAIL)
-	__install_directory_specif(${CMAKE_CURRENT_SOURCE_DIR}/ thumbnail)
+	__install_directory_specif(${CMAKE_CURRENT_SOURCE_DIR}/thumbnail thumbnail)
 endif()
