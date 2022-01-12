@@ -142,6 +142,7 @@ std::vector<unsigned char> base64_decode(std::string const& encoded_string) {
 bool Img2Gcode::imgEncode(const std::vector<unsigned char>& prevData, std::vector<std::string>& encodeData, const std::string& imgSizes,
 	const std::string& imgFormat, const int& layerCount, const char* saveFile)
 {
+	bool writefile = (saveFile==nullptr)?false:true;
 	std::string prevData_base64 = base64_encode(prevData);
 	int mainDataSize = prevData_base64.size();
 	int line_strlen = 76;
@@ -154,8 +155,11 @@ bool Img2Gcode::imgEncode(const std::vector<unsigned char>& prevData, std::vecto
 	std::string endData = imgFormat + std::string(" end");
 
 	encodeData.reserve(lineNum);
-	std::ofstream outfile;
-	outfile.open(saveFile, std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
+	if (writefile)
+	{
+		std::ofstream outfile;
+		outfile.open(saveFile, std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
+	}
 	for (int i = 0; i < lineNum; i++)
 	{
 		std::string CurLine;
@@ -171,10 +175,16 @@ bool Img2Gcode::imgEncode(const std::vector<unsigned char>& prevData, std::vecto
 		else {
 			CurLine = "; " + std::string(prevData_base64, line_strlen * (i - 1), line_strlen);
 		}
-		outfile << CurLine << std::endl;
+		if (writefile)
+		{
+			outfile << CurLine << std::endl;
+		}
 		encodeData.push_back(CurLine);
 	}
-	outfile.close();
+	if (writefile)
+	{
+		outfile.close();
+	}
 	return true;
 }
 
