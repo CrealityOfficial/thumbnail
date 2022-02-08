@@ -155,9 +155,9 @@ bool Img2Gcode::imgEncode(const std::vector<unsigned char>& prevData, std::vecto
 	std::string endData = imgFormat + std::string(" end");
 
 	encodeData.reserve(lineNum);
+	std::ofstream outfile;
 	if (writefile)
 	{
-		std::ofstream outfile;
 		outfile.open(saveFile, std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
 	}
 	for (int i = 0; i < lineNum; i++)
