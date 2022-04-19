@@ -47,6 +47,24 @@ int getLineEnd(const std::vector<unsigned char>& prevData, int line_strlen)
 	return LineEnd;
 }
 
+int getImageHeight(const std::string str)
+{
+	int val = 0;
+	std::string str2 = "";
+	for (int i = str.length() - 1; i >= 0; i--) {
+		if (str.at(i) >= 48 && str.at(i) < 58) {
+			str2 += str.at(i);
+		}
+		else break;
+	}
+	int Dec = 1;
+	for (int i = 0; i < str2.length(); i++) {
+		val += (int(str2.at(i)) - 48) * Dec;
+		Dec *= 10;
+	}
+	return val;
+}
+
 static const std::string base64_chars =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	"abcdefghijklmnopqrstuvwxyz"
@@ -144,13 +162,14 @@ bool Img2Gcode::imgEncode(const std::vector<unsigned char>& prevData, std::vecto
 {
 	bool writefile = (saveFile==nullptr)?false:true;
 	std::string prevData_base64 = base64_encode(prevData);
+	int prevDataSize = prevData.size();
 	int mainDataSize = prevData_base64.size();
 	int line_strlen = 76;
 	int lineNum = mainDataSize % line_strlen == 0 ? mainDataSize / line_strlen : mainDataSize / line_strlen + 1;
 	lineNum += 2;//Í·Î²Á½ÐÐ
-	int imgDataStartLineNo = getLineStart(prevData, line_strlen) + 1;
-	int imgDataEndLineNo = getLineEnd(prevData, line_strlen) + 1;
-	std::string headData = imgFormat + std::string(" begin ") + imgSizes + std::string(" ") + std::to_string(mainDataSize) + std::string(" ") + 
+	int imgDataStartLineNo = getImageHeight(imgSizes) * 0.0167 + 0.5;
+	int imgDataEndLineNo = getImageHeight(imgSizes) - imgDataStartLineNo;
+	std::string headData = imgFormat + std::string(" begin ") + imgSizes + std::string(" ") + std::to_string(prevDataSize) + std::string(" ") +
 		std::to_string(imgDataStartLineNo) + std::string(" ") + std::to_string(imgDataEndLineNo) + std::string(" ") + std::to_string(layerCount);
 	std::string endData = imgFormat + std::string(" end");
 
