@@ -7,10 +7,9 @@ endif()
 
 set(LIBS png cxbin trimesh2 zlib)
 set(INCS ${GLM_INCLUDE_DIRS})
-set(DEFS GLM_FORCE_LEFT_HANDED THUMBNAIL_DLL)
+set(DEFS GLM_FORCE_LEFT_HANDED)
 
-__add_real_target(thumbnail dll SOURCE
-									thumbnail/stl/helpers.h
+set(SRCS   thumbnail/stl/helpers.h
 									thumbnail/stl/parser.h
 									thumbnail/stl/parser.cpp
 									thumbnail/picture.cpp
@@ -41,6 +40,8 @@ __add_real_target(thumbnail dll SOURCE
 								DEF ${DEFS}
 								INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
 								)
+
+__add_common_library(thumbnail)
 
 if(INSTALL_THUMBNAIL)
 	INSTALL(TARGETS thumbnail

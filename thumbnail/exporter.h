@@ -1,18 +1,18 @@
+
 #ifndef THUMBNAIL_EXPORT
 #define THUMBNAIL_EXPORT
+#include "ccglobal/export.h"
 
-#ifdef WIN32
-	#ifdef THUMBNAIL_DLL
-		#define THUMBNAIL_API __declspec(dllexport)
-	#else
-		#define THUMBNAIL_API __declspec(dllimport)
-	#endif
+#if USE_THUMBNAIL_DLL
+#define THUMBNAIL_API CC_DECLARE_IMPORT
+#elif USE_THUMBNAIL_STATIC
+#define THUMBNAIL_API CC_DECLARE_STATIC
 #else
-	#ifdef THUMBNAIL_DLL
-		#define THUMBNAIL_API __attribute__((visibility("default")))
-	#else
-		#define THUMBNAIL_API
-	#endif
+#if THUMBNAIL_DLL
+#define THUMBNAIL_API CC_DECLARE_EXPORT
+#else
+#define THUMBNAIL_API CC_DECLARE_STATIC
+#endif
 #endif
 
 #endif // THUMBNAIL_EXPORT
