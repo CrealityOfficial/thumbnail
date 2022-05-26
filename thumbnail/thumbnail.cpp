@@ -151,3 +151,13 @@ bool thumbnail_to_gcode(const std::vector<unsigned char>& inPrevData, const std:
 {
    return  Img2Gcode::imgEncode(inPrevData,outGcodeStr,inImgSizes, inImgFormat, inlayerCount, nullptr);
 }
+
+bool thumbnail_image2base64(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat, std::vector<std::string>& outGcodeStr)
+{
+	return  Img2Gcode::image2base(inPrevData, inImgSizes, inImgFormat, outGcodeStr);
+}
+
+bool thumbnail_base2image(const std::vector<std::string>& inPrevData, std::vector<unsigned char>& outGcodeStr)
+{
+    return  Img2Gcode::base2image(inPrevData, outGcodeStr);
+}

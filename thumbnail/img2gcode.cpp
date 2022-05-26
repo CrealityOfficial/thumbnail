@@ -219,3 +219,45 @@ bool Img2Gcode::imgDecode(std::vector<std::string>& prevEncodeData, std::vector<
 	decodeData = base64_decode(prevData_base64);
 	return true;
 }
+
+
+
+bool Img2Gcode::image2base(const std::vector<unsigned char>& prevData, const std::string& imgSizes,const std::string& imgFormat, std::vector<std::string>& encodeData)
+{
+	std::string prevData_base64 = base64_encode(prevData);
+	int prevDataSize = prevData.size();
+	int mainDataSize = prevData_base64.size();
+	int line_strlen = 76;
+	int lineNum = mainDataSize % line_strlen == 0 ? mainDataSize / line_strlen : mainDataSize / line_strlen + 1;
+	lineNum += 1;//ͷ
+	int imgDataStartLineNo = getImageHeight(imgSizes) * 0.0167 + 0.5;
+	int imgDataEndLineNo = getImageHeight(imgSizes) - imgDataStartLineNo;
+	std::string headData = imgFormat + std::string(" begin ") + imgSizes + std::string(" ") + std::to_string(prevDataSize) + std::string(" ") +
+		std::to_string(imgDataStartLineNo) + std::string(" ") + std::to_string(imgDataEndLineNo)+std::string(" ") + std::string("endhead");
+
+	encodeData.reserve(lineNum);
+	std::ofstream outfile;
+
+	for (int i = 0; i < lineNum; i++)
+	{
+		std::string CurLine;
+		if (i == 0) {
+			CurLine = headData;
+		}
+		else if (i == lineNum - 1) {
+			CurLine = std::string(prevData_base64, line_strlen * (i - 1));
+		}
+		else {
+			CurLine = std::string(prevData_base64, line_strlen * (i - 1), line_strlen);
+		}
+		encodeData.push_back(CurLine);
+	}
+	return true;
+}
+
+bool Img2Gcode::base2image(const std::vector<std::string>& prevEncodeData, std::vector<unsigned char>& decodeData)
+{
+
+	decodeData = base64_decode(prevEncodeData[0]);
+	return true;
+}
