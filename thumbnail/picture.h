@@ -49,6 +49,7 @@ public:
     }
 
     void copyto(unsigned char* data);
+    static int getSELine(const std::string& file_path, int& sline, int& eline);
 private:
     void fill(float r, float g, float b, float a);
     void setBg(png_byte color_type, png_bytep* row_pointers, const Vec4& bg_color);

@@ -209,6 +209,52 @@ void Picture::fill(float r, float g, float b, float a)
     }
 }
 
+int Picture::getSELine(const std::string& file_path, int& sline, int& eline)
+{
+    const char* input_png_file_path = file_path.c_str();
+
+    // Load PNG file and decode it as raw RGBA pixels
+    // This uses lodepng library for PNG reading (not part of libimagequant)
+
+    unsigned int width, height;
+    unsigned char* raw_rgba_pixels = nullptr;
+    unsigned int status = lodepng_decode32_file(&raw_rgba_pixels, &width, &height, input_png_file_path);
+    if (status || nullptr == raw_rgba_pixels)
+    {
+        //        fprintf(stderr, "Can't load %s: %s\n", input_png_file_path, lodepng_error_text(status));
+        return -1;
+    }
+
+    int step_size = width * 4;
+    sline = -1;
+    eline = -1;
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < step_size; ++x)
+        {
+            if (raw_rgba_pixels[y * step_size + x] != 0)
+            {
+                sline = y;
+                break;
+            }
+        }
+        if (sline > -1) break;
+    }
+    for (int y = height - 1; y >= 0; y--)
+    {
+        for (int x = 0; x < step_size; ++x)
+        {
+            if (raw_rgba_pixels[y * step_size + x] != 0)
+            {
+                eline = y;
+                break;
+            }
+        }
+        if (eline > -1) break;
+    }
+    return 1;
+}
+
 void Picture::setBg(png_byte color_type, png_bytep* row_pointers, const Vec4& bg_color)
 {
     /* 根据不同的色彩类型进行相应处理 */

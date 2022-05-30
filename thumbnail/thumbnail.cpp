@@ -142,6 +142,11 @@ bool  thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, int model
     return thumbnail_trimeshs({ mesh }, width, height, model_color_idx,filePath);
 }
 
+int thumbnail_to_getSE(const char* infilePath, int& s, int& e)
+{
+    return Picture::getSELine(infilePath, s, e);
+}
+
 bool thumbnail_to_gcode(const char* infilePath, const int inImgSizes, const std::string& inImgFormat, const int& inlayerCount, std::string& outGcodeStr)
 {
     if (!infilePath) return false;
