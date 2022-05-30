@@ -9,10 +9,11 @@ class  Img2Gcode
 		~Img2Gcode();
 
 		static bool imgEncode(const std::vector<unsigned char>& prevData, std::vector<std::string>& encodeData, const std::string& imgSizes, 
-			const std::string& imgFormat, const int& layerCount, const char* saveFile);
+			const std::string& imgFormat, const std::string& imgPixelSE, const int& layerCount, const char* saveFile);
 		static bool imgDecode(std::vector<std::string>& prevData, std::vector<unsigned char>& decodeData);
 
-		static bool image2base(const std::vector<unsigned char>& prevData, const std::string& imgSizes,const std::string& imgFormat, std::vector<std::string>& encodeData);
+		static bool image2base(const std::vector<unsigned char>& prevData, const std::string& imgSizes,const std::string& imgFormat,
+			const std::string& imgPixelSE, std::vector<std::string>& encodeData);
 		static bool base2image(const std::vector<std::string>& prevData, std::vector<unsigned char>& decodeData);
 	};
 #endif

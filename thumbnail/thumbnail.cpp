@@ -147,17 +147,20 @@ bool thumbnail_to_gcode(const char* infilePath, const int inImgSizes, const std:
     if (!infilePath) return false;
     
 }
-bool thumbnail_to_gcode(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat, const int& inlayerCount, std::vector<std::string>& outGcodeStr)
+bool thumbnail_to_gcode(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat, 
+    const std::string& imgPixelSE, const int& inlayerCount, std::vector<std::string>& outGcodeStr)
 {
-   return  Img2Gcode::imgEncode(inPrevData,outGcodeStr,inImgSizes, inImgFormat, inlayerCount, nullptr);
+    return  Img2Gcode::imgEncode(inPrevData, outGcodeStr, inImgSizes, inImgFormat, imgPixelSE, inlayerCount, nullptr);
 }
 
 bool thumbnail_image2base64(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat, std::vector<std::string>& outGcodeStr)
 {
-	return  Img2Gcode::image2base(inPrevData, inImgSizes, inImgFormat, outGcodeStr);
+	return  Img2Gcode::image2base(inPrevData, inImgSizes, inImgFormat, std::string(), outGcodeStr);
 }
 
 bool thumbnail_base2image(const std::vector<std::string>& inPrevData, std::vector<unsigned char>& outGcodeStr)
 {
     return  Img2Gcode::base2image(inPrevData, outGcodeStr);
 }
+   
+
