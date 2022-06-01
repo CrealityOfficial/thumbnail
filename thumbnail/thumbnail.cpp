@@ -150,7 +150,7 @@ int thumbnail_to_getSE(const char* infilePath, int& s, int& e)
 bool thumbnail_to_gcode(const char* infilePath, const int inImgSizes, const std::string& inImgFormat, const int& inlayerCount, std::string& outGcodeStr)
 {
     if (!infilePath) return false;
-    
+    return true;    
 }
 bool thumbnail_to_gcode(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat, 
     const std::string& imgPixelSE, const int& inlayerCount, std::vector<std::string>& outGcodeStr)
