@@ -42,6 +42,16 @@ void _convert(const std::vector<trimesh::TriMesh*>& meshes, Mesh& mesh)
     }
 }
 
+std::string floatToString(const float& dbNum)
+{
+    char* chCode;
+    chCode = new(std::nothrow)char[20];
+    sprintf(chCode, "%.2f", dbNum);
+    std::string strCode(chCode);
+    delete[]chCode;
+    return strCode;
+}
+
 void thumbnail_trimeshes(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, unsigned char* data)
 {
     if (width <= 0 || height <= 0 || !data)
@@ -152,10 +162,16 @@ bool thumbnail_to_gcode(const char* infilePath, const int inImgSizes, const std:
     if (!infilePath) return false;
     return true;    
 }
+
 bool thumbnail_to_gcode(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat, 
-    const std::string& imgPixelSE, const int& inlayerCount, std::vector<std::string>& outGcodeStr)
+    const std::string& imgPixelSE, const int& inlayerCount, std::vector<std::string>& outGcodeStr, const float& layerHeight)
 {
-    return  Img2Gcode::imgEncode(inPrevData, outGcodeStr, inImgSizes, inImgFormat, imgPixelSE, inlayerCount, nullptr);
+    std::string imageMeg;
+    if (layerHeight != 0.)
+    {
+        imageMeg = imgPixelSE + " " + std::to_string(inlayerCount) + " " + floatToString(layerHeight);
+    }
+    return  Img2Gcode::imgEncode(inPrevData, outGcodeStr, inImgFormat, inImgSizes, imageMeg, nullptr);
 }
 
 bool thumbnail_image2base64(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat, std::vector<std::string>& outGcodeStr)
