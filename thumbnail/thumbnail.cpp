@@ -169,7 +169,7 @@ bool thumbnail_to_gcode(const std::vector<unsigned char>& inPrevData, const std:
     std::string imageMeg;
     if (layerHeight != 0.)
     {
-        imageMeg = imgPixelSE + " " + std::to_string(inlayerCount) + " " + floatToString(layerHeight);
+        imageMeg = imgPixelSE + " " + std::to_string(inlayerCount);
     }
     return  Img2Gcode::imgEncode(inPrevData, outGcodeStr, inImgFormat, inImgSizes, imageMeg, nullptr);
 }
