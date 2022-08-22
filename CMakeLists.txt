@@ -1,3 +1,9 @@
+__cc_find(png)
+__cc_find(cxbin)
+__cc_find(trimesh2)
+__cc_find(zlib)
+__cc_find(glm)
+
 __assert_target(png)
 __assert_target(zlib)
 
