@@ -19,6 +19,10 @@
 THUMBNAIL_API int STLThumbnail(const std::string& stl_file_path, const std::string& thumbnail_file_path,
                  size_t thumbnail_width, size_t thumbnail_height, int model_color_idx, const Vec4& back_color);
 
+
+THUMBNAIL_API int STLThumbnailTrimesh(const std::string& stl_file_path, const std::string& thumbnail_file_path,
+    size_t thumbnail_width, size_t thumbnail_height, int model_color_idx, const Vec4& back_color);
+
 // 计算原始模型经过变换之后的size
 int CalcTargetModelSize(Vec3& size, const std::string& stl_file_path, const float matrix[16]);
 

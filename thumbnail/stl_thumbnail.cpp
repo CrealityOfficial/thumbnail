@@ -7,207 +7,26 @@
 #include "cxbin/convert.h"
 #include "trimesh2/TriMesh.h"
 
-//int STLThumbnail(const char* stl_file_path, const char* thumbnail_file_path,
-//                 size_t thumbnail_width, size_t thumbnail_height, const char* thumbnail_bg_file_path, int depth)
+//TODO :test memory
+//#ifdef _WIN32
+//#include <Windows.h>
+//#include <Psapi.h>
+//#endif
+//void showMemory()
 //{
-//    // parse STL
-//    stl::Parser stl_parser;
-//    Mesh mesh;
-
-//    if (stl_parser.parseFile(mesh, stl_file_path) != 0)
-//    {
-//        return -1;
-//    }
-
-////    std::cout << "Triangles: " << mesh.size() << std::endl;
-
-//    // render using raster backend
-//    Picture pic(thumbnail_width, thumbnail_height, depth);
-//    pic.setBg(thumbnail_bg_file_path);
-
-//    Vec3 view_pos = { -1.f, -1.f, 1.f };
-//    Vec3 light_pos = { 2.f, 2.f, 2.5f };
-
-//    RasterBackend backend(thumbnail_width, thumbnail_height);
-//    backend.render(nullptr, pic, mesh, view_pos, light_pos);
-
-//    // save to disk
-//    if (pic.save(thumbnail_file_path) != 0)
-//    {
-//        return -1;
-//    }
-
-//    return 0;
+//#ifdef _WIN32
+//    HANDLE handle = GetCurrentProcess();
+//    PROCESS_MEMORY_COUNTERS pmc;
+//    GetProcessMemoryInfo(handle, &pmc, sizeof(pmc));
+//    //
+//    std::cout << "内存使用:" << pmc.WorkingSetSize / 1000 << "K/" << pmc.PeakWorkingSetSize / 1000 << "K + " << pmc.PagefileUsage / 1000 << "K/" << pmc.PeakPagefileUsage / 1000 << "K" << std::endl;
+//#endif
 //}
 
-//int STLThumbnails(std::vector<std::string>& covers_file_path_vec, const char* stl_file_path, const char* covers_file_path_prefix,
-//                  size_t covers_width, size_t covers_height, const char* covers_bg_file_path, int depth)
-//{
-//    // parse STL
-//    stl::Parser stl_parser;
-//    Mesh mesh;
-
-//    if (stl_parser.parseFile(mesh, stl_file_path) != 0)
-//    {
-//        return -1;
-//    }
-
-//    const int PIC_COUNT = 4;
-//    const Vec3 view_pos_vec[PIC_COUNT] = {{ -1.f, -1.f, 1.f }, { 1.f, -1.f, 1.f }, { -1.f, 1.f, 1.f }, { 1.f, 1.f, 1.f }};
-//    const Vec3 light_pos_vec[PIC_COUNT] = {{ 2.f, 2.f, 2.5f }, { -2.f, 2.f, 2.5f }, { 2.f, -2.f, 2.5f }, { -2.f, -2.f, 2.5f }};
-
-//    for (int i = 0; i < PIC_COUNT; ++i)
-//    {
-//        // render using raster backend
-//        Picture pic(covers_width, covers_height, depth);
-//        pic.setBg(covers_bg_file_path);
-
-//        RasterBackend backend(covers_width, covers_height);
-//        backend.render(nullptr, pic, mesh, view_pos_vec[i], light_pos_vec[i]);
-
-//        // save to disk
-//        std::string thumbnail_file_path(covers_file_path_prefix);
-//        thumbnail_file_path += "-";
-//        thumbnail_file_path.append(std::to_string(i + 1));
-//        thumbnail_file_path += ".png";
-
-//        if (pic.save(thumbnail_file_path) != 0)
-//        {
-//            return -1;
-//        }
-
-//        covers_file_path_vec.emplace_back(thumbnail_file_path);
-//    }
-
-//    return 0;
-//}
-
-//int STLThumbnailAll(const char* stl_file_path, const char* thumbnail_file_path, size_t thumbnail_width, size_t thumbnail_height,
-//                    const char* thumbnail_bg_file_path, std::vector<std::string>& covers_file_path_vec, const char* covers_file_path_prefix,
-//                    size_t covers_width, size_t covers_height, const char* covers_bg_file_path, int depth,
-//                    double& volume, uint32_t& facet_count, double& x, double& y, double& z)
-//{
-//    // parse STL
-//    stl::Parser stl_parser;
-//    Mesh mesh;
-
-//    if (stl_parser.parseFile(mesh, stl_file_path) != 0)
-//    {
-//        return -1;
-//    }
-
-//    volume = stl_parser.volume();
-//    facet_count = stl_parser.facetCount();
-
-////    std::cout << "Triangles: " << mesh.size() << std::endl;
-
-//    {
-//        // render using raster backend
-//        Picture pic(thumbnail_width, thumbnail_height, depth);
-//        pic.setBg(thumbnail_bg_file_path);
-
-//        Vec3 view_pos = { -1.f, -1.f, 1.f };
-//        Vec3 light_pos = { 2.f, 2.f, 2.5f };
-
-//        RasterBackend backend(thumbnail_width, thumbnail_height);
-//        Vec3 size;
-//        backend.render(&size, pic, mesh, view_pos, light_pos);
-
-//        // save to disk
-//        if (pic.save(thumbnail_file_path) != 0)
-//        {
-//            return -1;
-//        }
-
-//        x = size.x;
-//        y = size.y;
-//        z = size.z;
-//    }
-
-//    {
-//        const int PIC_COUNT = 4;
-//        const Vec3 view_pos_vec[PIC_COUNT] = {{ -1.f, -1.f, 1.f }, { 1.f, -1.f, 1.f }, { -1.f, 1.f, 1.f }, { 1.f, 1.f, 1.f }};
-//        const Vec3 light_pos_vec[PIC_COUNT] = {{ 2.f, 2.f, 2.5f }, { -2.f, 2.f, 2.5f }, { 2.f, -2.f, 2.5f }, { -2.f, -2.f, 2.5f }};
-
-//        for (int i = 0; i < PIC_COUNT; ++i)
-//        {
-//            // render using raster backend
-//            Picture pic(covers_width, covers_height, depth);
-//            pic.setBg(covers_bg_file_path);
-
-//            RasterBackend backend(covers_width, covers_height);
-//            backend.render(nullptr, pic, mesh, view_pos_vec[i], light_pos_vec[i]);
-
-//            // save to disk
-//            std::string thumbnail_file_path(covers_file_path_prefix);
-//            thumbnail_file_path += "-";
-//            thumbnail_file_path.append(std::to_string(i + 1));
-//            thumbnail_file_path += ".png";
-
-//            if (pic.save(thumbnail_file_path) != 0)
-//            {
-//                return -1;
-//            }
-
-//            covers_file_path_vec.emplace_back(thumbnail_file_path);
-//        }
-//    }
-
-//    return 0;
-//}
-
-//// 只生成一张缩略图的新接口
-//int STLThumbnail2(const std::string& stl_file_path, const std::string& thumbnail_file_path,
-//                  size_t thumbnail_width, size_t thumbnail_height, int model_color_idx)
-//{
-//    // parse STL
-//    stl::Parser stl_parser;
-//    Mesh mesh;
-
-//    if (stl_parser.parseFile(mesh, stl_file_path) != 0)
-//    {
-//        return -1;
-//    }
-
-////    std::cout << "Triangles: " << mesh.size() << std::endl;
-
-//    static Vec3 model_colors[] =
-//    {
-//        {0x42 / 255.f, 0xB5 / 255.f, 1.0f}, // 浅蓝
-//        {0x45 / 255.f, 0xBA / 255.f, 0xAB / 255.f}, // 浅绿
-//        {0.0f, 0x99 / 255.f, 0.0f}, // 深绿
-//        {0xFF / 255.f, 0x99 / 255.f, 0x33 / 255.f}, // 桔黄
-//        {0xCC / 255.f, 0x66 / 255.f, 0x99 / 255.f} // 粉红
-//    };
-
-//    if (model_color_idx < 0 || model_color_idx >= (int) (sizeof(model_colors) / sizeof(Vec3)))
-//    {
-//        // 随机一个
-//        model_color_idx = rand() % (sizeof(model_colors) / sizeof(Vec3));
-//    }
-
-//    static Vec3 view_pos = { -1.0f, 2.0f, 1.0f };
-//    static Vec3 light_pos = { 2.0f, -2.0f, 2.5f };
-
-//    // render using raster backend
-//    Picture pic(thumbnail_width, thumbnail_height);
-//    pic.setBg(nullptr);
-
-//    RasterBackend backend(thumbnail_width, thumbnail_height, model_colors[model_color_idx]);
-//    backend.render(nullptr, pic, mesh, view_pos, light_pos);
-
-//    // save to disk
-//    if (pic.save(thumbnail_file_path) != 0)
-//    {
-//        return -1;
-//    }
-
-//    return 0;
-//}
-
-int STLThumbnail(const std::string& stl_file_path, const std::string& thumbnail_file_path,
+int STLThumbnailTrimesh(const std::string& stl_file_path, const std::string& thumbnail_file_path,
                  size_t thumbnail_width, size_t thumbnail_height, int model_color_idx, const Vec4& back_color)
 {
+    //showMemory();
     static Vec3 model_colors[] =
     {
         {0x42 / 255.f, 0xB5 / 255.f, 1.0f}, // 浅蓝
@@ -241,7 +60,7 @@ int STLThumbnail(const std::string& stl_file_path, const std::string& thumbnail_
 		//std::cout << "mesh is null." << std::endl;
 		return -1;
     }
-    
+    //showMemory();
     for (trimesh::TriMesh* aMesh : meshs)
     {
 		for (size_t i = 0; i < aMesh->faces.size(); i++)
@@ -266,6 +85,8 @@ int STLThumbnail(const std::string& stl_file_path, const std::string& thumbnail_
             mesh.push_back(atriangle);
 		}
     }
+    //showMemory();
+
     cxbin::release(meshs);
 
     //    if (stl_parser.parseFile(mesh, raster_config.input) != 0)
@@ -295,8 +116,71 @@ int STLThumbnail(const std::string& stl_file_path, const std::string& thumbnail_
 //        std::cout << "save file error ." << rasterConfig.output << std::endl;
         return -1;
     }
-
+    //showMemory();
     return 0;
+}
+
+int STLThumbnail(const std::string& stl_file_path, const std::string& thumbnail_file_path,
+    size_t thumbnail_width, size_t thumbnail_height, int model_color_idx, const Vec4& back_color)
+{
+    //showMemory();
+    static Vec3 model_colors[] =
+    {
+        {0x42 / 255.f, 0xB5 / 255.f, 1.0f}, // 浅蓝
+        {0x45 / 255.f, 0xBA / 255.f, 0xAB / 255.f}, // 浅绿
+        {0.0f, 0x99 / 255.f, 0.0f}, // 深绿
+        {0xFF / 255.f, 0x99 / 255.f, 0x33 / 255.f}, // 桔黄
+        {0xCC / 255.f, 0x66 / 255.f, 0x99 / 255.f} // 粉红
+    };
+
+    if (model_color_idx < 0 || model_color_idx >= (int)(sizeof(model_colors) / sizeof(Vec3)))
+    {
+        model_color_idx = rand() % 5;
+    }
+
+    RasterConfig raster_config;
+    raster_config.input = stl_file_path;
+    raster_config.output = thumbnail_file_path;
+    raster_config.picWidth = thumbnail_width;
+    raster_config.picHeight = thumbnail_height;
+    raster_config.modelColor = model_colors[model_color_idx];
+    //    rasterConfig.viewDir = Vec3(-1.0f, -1.0f, -1.0f);
+    //    rasterConfig.viewRight = Vec3(1.0f, -1.0f, 0.0f);
+
+    stl::Parser stl_parser;
+    stl_parser.setCalculateVolume(false);
+
+    trimesh::TriMesh* mesh = cxbin::loadAll(raster_config.input, nullptr);
+    if (!mesh)
+    {
+        //std::cout << "mesh is null." << std::endl;
+        return -1;
+    }
+
+    //showMemory();
+    Picture picture(raster_config.picWidth, raster_config.picHeight, 4); // 4:rgba
+    picture.setBg(nullptr, back_color);
+
+    Raster raster;
+    if (!raster.rasterTriMesh(&picture, mesh, &raster_config))
+    {
+        //        std::cout << "raster error." << std::endl;
+        return -1;
+    }
+
+    if (picture.save(raster_config.output) != 0)
+    {
+        //        std::cout << "save file error ." << rasterConfig.output << std::endl;
+        return -1;
+    }
+
+    if (true)
+    {
+        delete mesh;
+        mesh = nullptr;
+    }
+    //showMemory();
+   return 0;
 }
 
 static void MatrixMultiplyPoint(Vec3& point, const float matrix[])
