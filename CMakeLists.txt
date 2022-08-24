@@ -1,6 +1,7 @@
 __cc_find(png)
 __cc_find(cxbin)
 __cc_find(trimesh2)
+__cc_find(mmesh)
 __cc_find(zlib)
 __cc_find(glm)
 
@@ -11,7 +12,7 @@ if(NOT GLM_INCLUDE_DIRS)
 	message(FATAL_ERROR "GLM_INCLUDE_DIRS Missing")
 endif()
 
-set(LIBS png cxbin trimesh2 zlib)
+set(LIBS png cxbin trimesh2 mmesh zlib)
 set(INCS ${GLM_INCLUDE_DIRS})
 set(DEFS GLM_FORCE_LEFT_HANDED)
 

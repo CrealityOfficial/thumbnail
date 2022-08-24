@@ -13,9 +13,10 @@ void thumbnail_trimeshes(const std::vector<trimesh::TriMesh*>& meshes, int width
 void thumbnail_trimesh_convert(trimesh::TriMesh* mesh, int width, int height, unsigned char* data);
 THUMBNAIL_API void thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, unsigned char* data);
 
+
 THUMBNAIL_API int thumbnail_to_getSE(const char* infilePath, int& s, int& e);
-bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, int model_color_idx, const char* filePath);
-bool thumbnail_trimesh_not_convert(trimesh::TriMesh* mesh, int width, int height, int model_color_idx, const char* filePath);
+THUMBNAIL_API bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, int model_color_idx, const char* filePath);
+THUMBNAIL_API bool thumbnail_trimesh_not_convert(trimesh::TriMesh* mesh, int width, int height, int model_color_idx, const char* filePath);
 THUMBNAIL_API bool thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, int model_color_idx, const char* filePath);
 THUMBNAIL_API bool thumbnail_to_gcode(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat,
 	const std::string& imgPixelSE, const int& inlayerCount, std::vector<std::string>& outGcodeStr, const float& layerHeight = 0.);
