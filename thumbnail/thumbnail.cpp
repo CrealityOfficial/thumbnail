@@ -106,9 +106,9 @@ void thumbnail_trimeshes(const std::vector<trimesh::TriMesh*>& meshes, int width
     }
     if (meshes.size() > 1)
     {
-        trimesh::TriMesh* outMesh = new trimesh::TriMesh();
-        mmesh::mergeTriMesh(outMesh, meshes);
-        return thumbnail_trimesh(outMesh, width, height, data);
+        std::unique_ptr<trimesh::TriMesh> outMesh(new trimesh::TriMesh());
+        mmesh::mergeTriMesh(outMesh.get(), meshes);
+        return thumbnail_trimesh(outMesh.get(), width, height, data);
     }
     return thumbnail_trimesh(meshes.at(0), width, height, data);
     //RasterConfig raster_config;
@@ -207,9 +207,9 @@ bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width,
         }
       if (meshes.size() > 1)
       {
-          trimesh::TriMesh* outMesh = new trimesh::TriMesh();
-          mmesh::mergeTriMesh(outMesh, meshes);
-          return thumbnail_trimesh_not_convert(outMesh, width, height, model_color_idx, filePath);
+          std::unique_ptr<trimesh::TriMesh> outMesh(new trimesh::TriMesh());
+          mmesh::mergeTriMesh(outMesh.get(), meshes);
+          return thumbnail_trimesh_not_convert(outMesh.get(), width, height, model_color_idx, filePath);
       }
       return thumbnail_trimesh_not_convert(meshes.at(0), width, height, model_color_idx, filePath);
 
