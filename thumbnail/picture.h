@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #pragma once
-
+#include "thumbnail/exporter.h"
 #include <string>
 #include <vector>
 #include <png.h> // sudo apt-get install libpng-dev
@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using Byte   = unsigned char;
 using Buffer = std::vector<Byte>;
 
-class Picture
+class THUMBNAIL_API Picture
 {
 public:
     explicit Picture(size_t width, size_t height, int depth = 4); // depth=3: rgb, depth=4: rgba

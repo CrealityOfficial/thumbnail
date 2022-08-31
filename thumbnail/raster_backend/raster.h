@@ -3,10 +3,7 @@
 
 #include "thumbnail/topomesh.h"
 
-namespace trimesh
-{
-    class TriMesh;
-}
+#include "trimesh2/TriMesh.h"
 
 class Picture;
 class RasterConfig;
@@ -18,6 +15,7 @@ public:
 
     bool raster(Picture* picture, Mesh* mesh, RasterConfig* rasterConfig);
     bool rasterTriMesh(Picture* picture, trimesh::TriMesh* mesh, RasterConfig* rasterConfig);
+    bool rasterTriangle(Picture* picture, const std::vector<trimesh::vec3>& triangles,const trimesh::box3& aabb, RasterConfig* rasterConfig);
     bool raster(Picture* picture, TopoMesh* topoMesh, RasterConfig* rasterConfig);
 
 protected:
