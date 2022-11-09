@@ -2,6 +2,7 @@ __cc_find(Png)
 __cc_find(CXBin)
 __cc_find(Trimesh2)
 __cc_find(Zlib)
+__cc_find(Glm)
 
 __assert_target(png)
 __assert_target(zlib)
