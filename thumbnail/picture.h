@@ -48,7 +48,7 @@ public:
         return depth_;
     }
 
-    void copyto(unsigned char* data);
+    void copyto(unsigned char* data, int depth = 4); // depth=3: rgb, depth=4: rgba
     static int getSELine(const std::string& file_path, int& sline, int& eline);
 private:
     void fill(float r, float g, float b, float a);
