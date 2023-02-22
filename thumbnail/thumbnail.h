@@ -9,7 +9,12 @@ class Picture;
 
 void thumbnail_trimeshes(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, unsigned char* data);
 void thumbnail_trimesh_convert(trimesh::TriMesh* mesh, int width, int height, unsigned char* data);
-THUMBNAIL_API void thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, unsigned char* data);
+
+void thumbnail_trimesh_convert(trimesh::TriMesh* mesh, int width, int height, unsigned char* data, int stride, trimesh::vec3 viewDir, trimesh::vec3 viewRight);
+
+THUMBNAIL_API void thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, unsigned char* data, int stride, trimesh::vec3 viewDir, trimesh::vec3 viewRight);//stride 3 RGB 4 RGBA ; 
+
+THUMBNAIL_API void thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, unsigned char* datad);
 
 THUMBNAIL_API bool thumbnail_trimesh_not_convert_op(Picture* picture,const std::vector<trimesh::vec3>& triangles, const trimesh::box3& aabb, int width, int height, int model_color_idx, const char* filePath);
 
