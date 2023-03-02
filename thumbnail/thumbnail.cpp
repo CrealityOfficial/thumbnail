@@ -286,6 +286,25 @@ bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width,
     //}
     //return true;
 }
+
+bool thumbnail_trimeshsPtr(const std::vector<TriMeshPtr>& meshes, int width, int height, int model_color_idx, const char* filePath)
+{
+    if (width <= 0 || height <= 0 || !filePath || meshes.size() == 0)
+        return false;
+    if (model_color_idx < 0 || model_color_idx >= (int)(sizeof(model_colors) / sizeof(Vec3)))
+    {
+        model_color_idx = rand() % 5;
+    }
+    if (meshes.size() > 1)
+    {
+        TriMeshPtr outMesh(new trimesh::TriMesh());
+        mmesh::mergeTriMeshPtr(outMesh, meshes);
+        return thumbnail_trimesh_not_convert(outMesh.get(), width, height, model_color_idx, filePath);
+    }
+    return thumbnail_trimesh_not_convert(meshes.at(0).get(), width, height, model_color_idx, filePath);
+
+}
+
 bool  thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, int model_color_idx, const char* filePath)
 {
     return thumbnail_trimesh_not_convert(mesh, width, height, model_color_idx,filePath);

@@ -3,8 +3,10 @@
 #include "thumbnail/exporter.h"
 #include <vector>
 #include<string>
+#include <memory>
 #include "trimesh2/TriMesh.h"
 
+typedef std::shared_ptr<trimesh::TriMesh> TriMeshPtr;
 class Picture;
 
 void thumbnail_trimeshes(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, unsigned char* data);
@@ -22,5 +24,8 @@ THUMBNAIL_API bool thumbnail_to_gcode(const std::vector<unsigned char>& inPrevDa
 //
 THUMBNAIL_API bool thumbnail_image2base64(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat, std::vector<std::string>& outGcodeStr);
 THUMBNAIL_API bool thumbnail_base2image(const std::vector<std::string>& inPrevData, std::vector<unsigned char>& outGcodeStr);
+
+THUMBNAIL_API bool thumbnail_trimeshsPtr(const std::vector<TriMeshPtr>& meshes, int width, int height, int model_color_idx, const char* filePath);
+
 
 #endif // _THUMBNAIL_1635927924764_H
