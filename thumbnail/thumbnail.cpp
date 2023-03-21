@@ -141,11 +141,11 @@ void thumbnail_trimesh_convert(trimesh::TriMesh* mesh, int width, int height, un
     }
 
     picture.copyto(data, stride);
-    if (picture.save(raster_config.output) != 0)
-    {
-        //        std::cout << "save file error ." << rasterConfig.output << std::endl;
-        return;
-    }
+    //if (picture.save(raster_config.output) != 0)
+    //{
+    //    //        std::cout << "save file error ." << rasterConfig.output << std::endl;
+    //    return;
+    //}
 }
 
 void thumbnail_trimeshes(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, unsigned char* data)
