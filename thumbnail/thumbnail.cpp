@@ -123,6 +123,8 @@ void thumbnail_trimesh_convert(trimesh::TriMesh* mesh, int width, int height, un
 
     raster_config.viewDir = Vec3(viewDir.x, viewDir.y, viewDir.z);
     raster_config.viewRight = Vec3(viewRight.x, viewRight.y, viewRight.z);
+    trimesh::vec3 up = trimesh::cross(viewDir, viewRight);
+    raster_config.viewUp = Vec3(up.x, up.y, up.z);
 
     if (!mesh)
     {
