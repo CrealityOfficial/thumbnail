@@ -8,12 +8,18 @@ __cc_find(MMesh)
 
 __assert_target(png)
 __assert_target(zlib)
+__assert_target(cxbin)
+__assert_target(mmesh)
 
 if(NOT GLM_INCLUDE_DIRS)
-	message(FATAL_ERROR "GLM_INCLUDE_DIRS Missing")
+	message(STATUS "GLM_INCLUDE_DIRS Missing")
 endif()
 
 set(LIBS png cxbin trimesh2 mmesh zlib)
+if(TARGET glm)
+	list(APPEND LIBS glm)
+endif()
+
 set(INCS ${GLM_INCLUDE_DIRS})
 set(DEFS GLM_FORCE_LEFT_HANDED)
 
