@@ -88,7 +88,7 @@ void thumbnail_trimesh_convert(trimesh::TriMesh* mesh, int width, int height, un
     }
 
     picture.copyto(data);
-    if (picture.save(raster_config.output) != 0)
+    //if (picture.save(raster_config.output) != 0)
     {
         //        std::cout << "save file error ." << rasterConfig.output << std::endl;
         return;
@@ -322,5 +322,54 @@ bool thumbnail_base2image(const std::vector<std::string>& inPrevData, std::vecto
 {
     return  Img2Gcode::base2image(inPrevData, outGcodeStr);
 }
-   
 
+void getImageStr(std::string& imageStr, std::string imgSavePath, std::string imgSize, std::string sPreImgFormat, int layers,float layerHeight)
+{
+    std::string imgSaveStdPath(imgSavePath);
+
+    std::fstream ios(imgSaveStdPath, std::ios::binary | std::ios::in);
+    std::string s;
+    std::vector<unsigned char> data;
+    while (std::getline(ios, s))
+    {
+        s += "\n";
+        int src_size = data.size();
+        data.resize(src_size + s.size());
+        copy(s.begin(), s.end(), data.begin() + src_size);
+    }
+    ios.clear();
+    ios.close();  // ¹Ø±ÕÎÄ¼þ  
+
+    data.pop_back();
+    std::vector<std::string> outStr;
+    std::string imgPixelSE;
+    int sLine = -1, eLine = -1;
+    thumbnail_to_getSE(imgSavePath.c_str(), sLine, eLine);
+    imgPixelSE = std::to_string(sLine) + " " + std::to_string(eLine);
+    thumbnail_to_gcode(data, imgSize, sPreImgFormat, imgPixelSE, layers, outStr, layerHeight);
+    for (auto& line : outStr)
+    {
+        imageStr += line;
+        imageStr += "\n";
+    }
+}
+
+bool thumbnail_trimeshs_gcode_head(const std::vector<trimesh::TriMesh*>& meshes, const float layer_height, const int layer_num, const std::string preImgFormat, int width, int height, int model_color_idx
+    , std::string& out)
+{
+    if (meshes.size() == 0)
+    {
+        return false;
+    }
+    std::string previewImagePath = "test." + preImgFormat;
+    std::string imgSize = std::to_string(width) + "*" + std::to_string(height);
+    std::string previewImageDataString;
+
+    thumbnail_trimeshs(meshes, width, height, model_color_idx, previewImagePath.c_str());
+    getImageStr(previewImageDataString, previewImagePath, imgSize, preImgFormat, layer_num, layer_height);
+    if (!previewImageDataString.empty())
+    {
+        out = previewImageDataString;
+    }
+    return true;
+}

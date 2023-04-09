@@ -27,5 +27,8 @@ THUMBNAIL_API bool thumbnail_base2image(const std::vector<std::string>& inPrevDa
 
 THUMBNAIL_API bool thumbnail_trimeshsPtr(const std::vector<TriMeshPtr>& meshes, int width, int height, int model_color_idx, const char* filePath);
 
+//生成gcode的预览头
+THUMBNAIL_API bool thumbnail_trimeshs_gcode_head(const std::vector<trimesh::TriMesh*>& meshes, const float layer_height, const int layer_num,const std::string preImgFormat,int width, int height, int model_color_idx
+    , std::string& out);
 
 #endif // _THUMBNAIL_1635927924764_H
