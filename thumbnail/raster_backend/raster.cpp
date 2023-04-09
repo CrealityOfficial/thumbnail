@@ -47,7 +47,8 @@ bool Raster::rasterTriMesh(Picture* picture, trimesh::TriMesh* mesh, RasterConfi
     float nearPlane = d - len;
     float farPlane = d + len;
 
-    glm::highp_mat4 projectionMatrix = glm::perspective(fovy, (float)width / (float)height, nearPlane, farPlane);
+    glm::highp_mat4 projectionMatrix = glm::perspective(fovy, 1.0f, nearPlane, farPlane);
+    //glm::highp_mat4 projectionMatrix = glm::perspective(fovy, (float)width / (float)height, nearPlane, farPlane);
 
     glm::vec3 viewDir = vec3ToGLM(rasterConfig->viewDir);
     glm::vec3 viewUp = vec3ToGLM(rasterConfig->viewUp);

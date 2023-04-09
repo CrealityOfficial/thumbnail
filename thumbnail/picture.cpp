@@ -193,9 +193,9 @@ void Picture::setRGB(size_t x, size_t y, float r, float g, float b, float a)
     setRGB(x, y, floatToByte(r), floatToByte(g), floatToByte(b), floatToByte(a));
 }
 
-void Picture::copyto(unsigned char* data)
+void Picture::copyto(unsigned char* data, int depth) // depth=3: rgb, depth=4: rgba
 {
-    memcpy(data, buffer_.data(), width_ * height_ * 4);
+    memcpy(data, buffer_.data(), width_ * height_ * depth);
 }
 
 void Picture::fill(float r, float g, float b, float a)
