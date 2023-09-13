@@ -16,8 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "picture.h"
-//#include <libimagequant.h>
-//#include <iostream>
+#include <png.h> // sudo apt-get install libpng-dev
 #include "lodepng.h" // Get it from https://raw.githubusercontent.com/lvandeve/lodepng/master/lodepng.h
 #include "lodepng.cpp" // Get it from https://raw.githubusercontent.com/lvandeve/lodepng/master/lodepng.cpp
 

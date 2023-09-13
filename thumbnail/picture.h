@@ -19,8 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "thumbnail/exporter.h"
 #include <string>
 #include <vector>
-#include <png.h> // sudo apt-get install libpng-dev
 #include "vec4.h"
+
+typedef unsigned char png_byte;
+typedef png_byte* png_bytep;
 
 using Byte   = unsigned char;
 using Buffer = std::vector<Byte>;

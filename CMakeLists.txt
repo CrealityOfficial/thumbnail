@@ -1,18 +1,15 @@
-__cc_find(Png)
-__cc_find(CXBin)
-__cc_find(Trimesh2)
-__cc_find(Zlib)
+__cc_find(png_static)
+__cc_find(cxbin)
+__cc_find(trimesh2)
+__cc_find(glm)
 
-__assert_target(png)
-__assert_target(zlib)
+__assert_target(png_static)
+__assert_target(cxbin)
+__assert_target(trimesh2)
+__assert_target(glm)
 
-if(NOT GLM_INCLUDE_DIRS)
-	message(FATAL_ERROR "GLM_INCLUDE_DIRS Missing")
-endif()
-
-set(LIBS png cxbin trimesh2 mmesh zlib)
-set(INCS ${GLM_INCLUDE_DIRS})
-set(DEFS GLM_FORCE_LEFT_HANDED)
+set(LIBS png_static cxbin trimesh2 mmesh glm)
+set(INCS )
 
 set(SRCS   thumbnail/stl/helpers.h
 									thumbnail/stl/parser.h
