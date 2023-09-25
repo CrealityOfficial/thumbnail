@@ -1,5 +1,4 @@
 #include"img2gcode.h"
-
 #include<fstream>
 
 Img2Gcode::Img2Gcode()

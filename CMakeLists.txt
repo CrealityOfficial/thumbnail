@@ -1,14 +1,15 @@
+__cc_find(zlib_static)
 __cc_find(png_static)
-__cc_find(cxbin)
 __cc_find(trimesh2)
 __cc_find(glm)
 
+__assert_target(zlib_static)
 __assert_target(png_static)
-__assert_target(cxbin)
 __assert_target(trimesh2)
 __assert_target(glm)
 
-set(LIBS png_static cxbin trimesh2 mmesh glm)
+set(LIBS glm)
+set(ILIBS trimesh2 png_static zlib_static)
 set(INCS )
 
 set(SRCS   thumbnail/stl/helpers.h
@@ -29,21 +30,20 @@ set(SRCS   thumbnail/stl/helpers.h
 									thumbnail/raster_backend/rasterconfig.h
 									thumbnail/raster_backend/zbuffer.cpp
 									thumbnail/raster_backend/zbuffer.h
-									thumbnail/topomesh.h
-									thumbnail/topomesh.cpp
-									thumbnail/stl_thumbnail.h
-									thumbnail/stl_thumbnail.cpp
 									thumbnail/thumbnail.h
 									thumbnail/thumbnail.cpp
 									thumbnail/img2gcode.cpp
 									thumbnail/img2gcode.h
-								LIB ${LIBS}
-								INC ${INCS}
-								DEF ${DEFS}
-								INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
 								)
 
-__add_common_library(thumbnail)
+__add_real_target(thumbnail_static lib SOURCE ${SRCS}
+									   LIB ${LIBS}
+									   ILIB ${ILIBS}
+								       INC ${INCS}
+								       DEF ${DEFS}
+								       INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
+									   SOURCE_FOLDER
+									   )
 
 if(INSTALL_THUMBNAIL)
 	INSTALL(TARGETS thumbnail

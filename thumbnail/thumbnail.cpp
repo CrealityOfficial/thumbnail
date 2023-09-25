@@ -3,8 +3,8 @@
 #include "raster_backend/raster.h"
 #include "picture.h"
 #include "trimesh2/TriMesh.h"
-#include"mmesh/trimesh/trimeshutil.h"
-#include"img2gcode.h"
+#include "img2gcode.h"
+
 static Vec3 model_colors[] =
 {
     {0x42 / 255.f, 0xB5 / 255.f, 1.0f}, // Ç³À¶
@@ -14,6 +14,76 @@ static Vec3 model_colors[] =
     {0xCC / 255.f, 0x66 / 255.f, 0x99 / 255.f} // ·Ûºì
 };
 
+trimesh::TriMesh* mergeMeshes(const std::vector<trimesh::TriMesh*>& inMeshes)
+{
+    trimesh::TriMesh* outMesh = new trimesh::TriMesh();
+    size_t totalVertexSize = outMesh->vertices.size();
+    size_t totalUVSize = outMesh->cornerareas.size();
+    size_t totalTriangleSize = outMesh->faces.size();
+
+    size_t addVertexSize = 0;
+    size_t addTriangleSize = 0;
+    size_t addUVSize = 0;
+
+    size_t meshSize = inMeshes.size();
+    for (size_t i = 0; i < meshSize; ++i)
+    {
+        if (inMeshes.at(i))
+        {
+            addVertexSize += inMeshes.at(i)->vertices.size();
+            addTriangleSize += inMeshes.at(i)->faces.size();
+            addUVSize += inMeshes.at(i)->cornerareas.size();
+        }
+    }
+    totalVertexSize += addVertexSize;
+    totalTriangleSize += addTriangleSize;
+    totalUVSize += addUVSize;
+
+    if (addVertexSize > 0 && addTriangleSize > 0)
+    {
+        outMesh->vertices.reserve(totalVertexSize);
+        outMesh->cornerareas.reserve(totalUVSize);
+        outMesh->faces.reserve(totalTriangleSize);
+
+        size_t startFaceIndex = outMesh->faces.size();
+        size_t startVertexIndex = outMesh->vertices.size();;
+        size_t startUVIndex = outMesh->cornerareas.size();
+        for (size_t i = 0; i < meshSize; ++i)
+        {
+            trimesh::TriMesh* mesh = inMeshes.at(i);
+            if (mesh)
+            {
+                int vertexNum = (int)mesh->vertices.size();
+                int faceNum = (int)mesh->faces.size();
+                int uvNum = (int)mesh->cornerareas.size();
+                if (vertexNum > 0 && faceNum > 0)
+                {
+                    outMesh->vertices.insert(outMesh->vertices.end(), mesh->vertices.begin(), mesh->vertices.end());
+                    outMesh->cornerareas.insert(outMesh->cornerareas.end(), mesh->cornerareas.begin(), mesh->cornerareas.end());
+                    outMesh->faces.insert(outMesh->faces.end(), mesh->faces.begin(), mesh->faces.end());
+
+                    size_t endFaceIndex = startFaceIndex + faceNum;
+                    if (startVertexIndex > 0)
+                    {
+                        for (size_t ii = startFaceIndex; ii < endFaceIndex; ++ii)
+                        {
+                            trimesh::TriMesh::Face& face = outMesh->faces.at(ii);
+                            for (int j = 0; j < 3; ++j)
+                                face[j] += startVertexIndex;
+                        }
+                    }
+
+                    startFaceIndex += faceNum;
+                    startVertexIndex += vertexNum;
+                    startUVIndex += uvNum;
+
+                }
+            }
+        }
+    }
+
+    return outMesh;
+}
 
 void _convert(const std::vector<trimesh::TriMesh*>& meshes, Mesh& mesh)
 {
@@ -161,8 +231,7 @@ void thumbnail_trimeshes(const std::vector<trimesh::TriMesh*>& meshes, int width
     }
     if (meshes.size() > 1)
     {
-        std::unique_ptr<trimesh::TriMesh> outMesh(new trimesh::TriMesh());
-        mmesh::mergeTriMesh(outMesh.get(), meshes);
+        std::unique_ptr<trimesh::TriMesh> outMesh(mergeMeshes(meshes));
         return thumbnail_trimesh(outMesh.get(), width, height, data);
     }
     return thumbnail_trimesh(meshes.at(0), width, height, data);
@@ -313,8 +382,7 @@ bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width,
         }
       if (meshes.size() > 1)
       {
-          std::unique_ptr<trimesh::TriMesh> outMesh(new trimesh::TriMesh());
-          mmesh::mergeTriMesh(outMesh.get(), meshes);
+          std::unique_ptr<trimesh::TriMesh> outMesh(mergeMeshes(meshes));
           return thumbnail_trimesh_not_convert(outMesh.get(), width, height, model_color_idx, filePath);
       }
       return thumbnail_trimesh_not_convert(meshes.at(0), width, height, model_color_idx, filePath);
