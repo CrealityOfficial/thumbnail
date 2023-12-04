@@ -1,4 +1,4 @@
-#include "thumbnail.h"
+﻿#include "thumbnail.h"
 #include "raster_backend/rasterconfig.h"
 #include "raster_backend/raster.h"
 #include "picture.h"
@@ -7,11 +7,12 @@
 #include"img2gcode.h"
 static Vec3 model_colors[] =
 {
-    {0x42 / 255.f, 0xB5 / 255.f, 1.0f}, // ǳ��
-    {0x45 / 255.f, 0xBA / 255.f, 0xAB / 255.f}, // ǳ��
-    {0.0f, 0x99 / 255.f, 0.0f}, // ����
-    {0xFF / 255.f, 0x99 / 255.f, 0x33 / 255.f}, // �ۻ�
-    {0xCC / 255.f, 0x66 / 255.f, 0x99 / 255.f} // �ۺ�
+    {0x42 / 255.f, 0xB5 / 255.f, 1.0f}, // 浅蓝
+    {0x45 / 255.f, 0xBA / 255.f, 0xAB / 255.f}, // 浅绿
+    {0.0f, 0x99 / 255.f, 0.0f}, // 深绿
+    {0xFF / 255.f, 0x99 / 255.f, 0x33 / 255.f}, // 桔黄
+    {0xCC / 255.f, 0x66 / 255.f, 0x99 / 255.f}, // 粉红
+    {0x80 / 255.f, 0x80 / 255.f, 0x80 / 255.f} // 灰色
 };
 
 
@@ -303,6 +304,44 @@ bool thumbnail_trimesh_not_convert_op(Picture* picture,const std::vector<trimesh
     return true;
 }
 
+bool thumbnail_trimesh_not_convert_picture(Picture* picture, trimesh::TriMesh* mesh, const trimesh::box3& aabb, int width, int height, int model_color_idx, const char* filePath)
+{
+    if (width <= 0 || height <= 0 || !filePath || !picture)
+        return false;
+    if (model_color_idx < 0 || model_color_idx >= (int)(sizeof(model_colors) / sizeof(Vec3)))
+    {
+        model_color_idx = rand() % 5;
+    }
+
+    RasterConfig raster_config;
+    raster_config.output = filePath;
+    raster_config.picWidth = width;
+    raster_config.picHeight = height;
+    raster_config.modelColor = model_colors[model_color_idx];
+    //    rasterConfig.viewDir = Vec3(-1.0f, -1.0f, -1.0f);
+    //    rasterConfig.viewRight = Vec3(1.0f, -1.0f, 0.0f);
+
+    if (!mesh)
+    {
+        return false;
+    }
+
+    //Picture picture(raster_config.picWidth, raster_config.picHeight, 4); // 4:rgba
+    //picture->setBg(nullptr, Vec4());
+
+    Raster raster;
+    if (!raster.rasterTriMesh(picture, mesh, &raster_config))
+    {
+        return false;
+    }
+    if (picture->save(raster_config.output) != 0)
+    {
+        //        std::cout << "save file error ." << rasterConfig.output << std::endl;
+        return false;
+    }
+    return true;
+}
+
 bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, int model_color_idx,const char* filePath)
 {
     if (width <= 0 || height <= 0 || !filePath || meshes.size()==0)
@@ -385,5 +424,54 @@ bool thumbnail_base2image(const std::vector<std::string>& inPrevData, std::vecto
 {
     return  Img2Gcode::base2image(inPrevData, outGcodeStr);
 }
+
+void getImageStr(std::string& imageStr, std::string imgSavePath, std::string imgSize, std::string sPreImgFormat, int layers, float layerHeight)
+{
+    std::string imgSaveStdPath(imgSavePath);
+    std::fstream ios(imgSaveStdPath, std::ios::binary | std::ios::in);
+    std::string s;
+    std::vector<unsigned char> data;
+    while (std::getline(ios, s))
+    {
+        s += "\n";
+        int src_size = data.size();
+        data.resize(src_size + s.size());
+        copy(s.begin(), s.end(), data.begin() + src_size);
+    }
+    ios.clear();
+    ios.close();  // ¹Ø±ÕÎÄ¼þ  
+    data.pop_back();
+    std::vector<std::string> outStr;
+    std::string imgPixelSE;
+    int sLine = -1, eLine = -1;
+    thumbnail_to_getSE(imgSavePath.c_str(), sLine, eLine);
+    imgPixelSE = std::to_string(sLine) + " " + std::to_string(eLine);
+    thumbnail_to_gcode(data, imgSize, sPreImgFormat, imgPixelSE, layers, outStr, layerHeight);
+    for (auto& line : outStr)
+    {
+        imageStr += line;
+        imageStr += "\n";
+    }
+}
+
+bool thumbnail_trimeshs_gcode_head(const std::vector<trimesh::TriMesh*>& meshes, const float layer_height, const int layer_num, const std::string preImgFormat, int width, int height, int model_color_idx
+    , std::string& out)
+{
+    if (meshes.size() == 0)
+    {
+        return false;
+    }
+    std::string previewImagePath = "test." + preImgFormat;
+    std::string imgSize = std::to_string(width) + "*" + std::to_string(height);
+    std::string previewImageDataString;
+    thumbnail_trimeshs(meshes, width, height, model_color_idx, previewImagePath.c_str());
+    getImageStr(previewImageDataString, previewImagePath, imgSize, preImgFormat, layer_num, layer_height);
+    if (!previewImageDataString.empty())
+    {
+        out = previewImageDataString;
+    }
+    return true;
+}
+
    
 

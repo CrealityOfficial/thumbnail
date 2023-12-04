@@ -17,6 +17,7 @@ THUMBNAIL_API void thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int heig
 THUMBNAIL_API void thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, unsigned char* datad);
 
 THUMBNAIL_API bool thumbnail_trimesh_not_convert_op(Picture* picture,const std::vector<trimesh::vec3>& triangles, const trimesh::box3& aabb, int width, int height, int model_color_idx, const char* filePath);
+THUMBNAIL_API bool thumbnail_trimesh_not_convert_picture(Picture* picture, trimesh::TriMesh* mesh, const trimesh::box3& aabb, int width, int height, int model_color_idx, const char* filePath);
 
 THUMBNAIL_API int thumbnail_to_getSE(const char* infilePath, int& s, int& e);
 THUMBNAIL_API bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, int model_color_idx, const char* filePath);
@@ -27,5 +28,9 @@ THUMBNAIL_API bool thumbnail_to_gcode(const std::vector<unsigned char>& inPrevDa
 //
 THUMBNAIL_API bool thumbnail_image2base64(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat, std::vector<std::string>& outGcodeStr);
 THUMBNAIL_API bool thumbnail_base2image(const std::vector<std::string>& inPrevData, std::vector<unsigned char>& outGcodeStr);
+
+//ÔÆÇÐÆ¬µ÷ÓÃ
+THUMBNAIL_API bool thumbnail_trimeshs_gcode_head(const std::vector<trimesh::TriMesh*>& meshes, const float layer_height, const int layer_num, const std::string preImgFormat, int width, int height, int model_color_idx
+    , std::string& out);
 
 #endif // _THUMBNAIL_1635927924764_H
