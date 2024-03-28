@@ -372,9 +372,9 @@ bool thumbnail_trimesh_not_convert_op(Picture* picture,const std::vector<trimesh
     return true;
 }
 
-bool thumbnail_triangles_2_picture(Picture* picture, const std::vector<trimesh::vec3>& triangles, const trimesh::box3& aabb, int width, int height, const trimesh::vec3& color)
+bool thumbnail_triangles_2_picture(Picture* picture, ZBuffer* buffer, const std::vector<trimesh::vec3>& triangles, const trimesh::box3& aabb, int width, int height, const trimesh::vec3& color)
 {
-    if (!picture || width <= 0 || height <= 0)
+    if (!picture || !buffer || width <= 0 || height <= 0)
     {
         return false;
     }
@@ -391,7 +391,7 @@ bool thumbnail_triangles_2_picture(Picture* picture, const std::vector<trimesh::
     raster_config.modelColor = c;
 
     Raster raster;
-    if (raster.rasterTriangle(picture, triangles, aabb, &raster_config))
+    if (raster.rasterTriangles(picture, buffer, triangles, aabb, &raster_config))
         return true;
 
     return false;

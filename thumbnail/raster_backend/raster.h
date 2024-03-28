@@ -6,6 +6,7 @@
 #include "trimesh2/TriMesh.h"
 
 class Picture;
+class ZBuffer;
 class RasterConfig;
 class Raster
 {
@@ -16,6 +17,8 @@ public:
     bool raster(Picture* picture, Mesh* mesh, RasterConfig* rasterConfig);
     bool rasterTriMesh(Picture* picture, trimesh::TriMesh* mesh, RasterConfig* rasterConfig);
     bool rasterTriangle(Picture* picture, const std::vector<trimesh::vec3>& triangles,const trimesh::box3& aabb, RasterConfig* rasterConfig);
+    bool rasterTriangles(Picture* picture, ZBuffer* buffer, const std::vector<trimesh::vec3>& triangles, const trimesh::box3& aabb, RasterConfig* rasterConfig);
+
     bool raster(Picture* picture, TopoMesh* topoMesh, RasterConfig* rasterConfig);
 
 protected:
