@@ -5,6 +5,8 @@
 #include "trimesh2/TriMesh.h"
 #include "img2gcode.h"
 
+#include "raster_backend/zbuffer.h"
+
 static Vec3 model_colors[] =
 {
     {0x42 / 255.f, 0xB5 / 255.f, 1.0f}, // 浅蓝
@@ -14,6 +16,16 @@ static Vec3 model_colors[] =
     {0xCC / 255.f, 0x66 / 255.f, 0x99 / 255.f}, // 粉红
     {0x80 / 255.f, 0x80 / 255.f, 0x80 / 255.f} // 灰色
 };
+
+trimesh::vec3 index_2_color(int color_index) {
+    if (color_index < 0 || color_index >= (int)(sizeof(model_colors) / sizeof(Vec3)))
+    {
+        color_index = rand() % 5;
+    }
+
+    Vec3 c = model_colors[color_index];
+    return trimesh::vec3(c.x, c.y, c.z);
+}
 
 trimesh::TriMesh* mergeMeshes(const std::vector<trimesh::TriMesh*>& inMeshes)
 {
@@ -124,253 +136,30 @@ std::string floatToString(const float& dbNum)
     return strCode;
 }
 
-void thumbnail_trimesh_convert(trimesh::TriMesh* mesh, int width, int height, unsigned char* data)
+bool thumbnail_trimesh_2_picture_index(Picture* picture, ZBuffer* buffer, trimesh::TriMesh* mesh, const trimesh::box3& aabb, int width, int height, int color_index)
 {
-    if (width <= 0 || height <= 0 || !data)
-        return;
-    int model_color_idx = 1;
-    if (model_color_idx < 0 || model_color_idx >= (int)(sizeof(model_colors) / sizeof(Vec3)))
-    {
-        model_color_idx = rand() % 5;
-    }
-
-    RasterConfig raster_config;
-    raster_config.output = "test.png";
-    raster_config.picWidth = width;
-    raster_config.picHeight = height;
-    raster_config.modelColor = model_colors[model_color_idx];
-
-    //Front view
-    //raster_config.viewDir = Vec3(0.0f, 1.0f, 0.0f);
-    //raster_config.viewRight = Vec3(1.0f, 0.0f, 0.0f);
-
-    if (!mesh)
-    {
-        //std::cout << "mesh is null." << std::endl;
-        return;
-    }
-
-    Picture picture(raster_config.picWidth, raster_config.picHeight); // 4:rgba
-    picture.setBg(nullptr, Vec4());
-
-    Raster raster;
-    if (!raster.rasterTriMesh(&picture, mesh, &raster_config))
-    {
-        //        std::cout << "raster error." << std::endl;
-        return;
-    }
-
-    picture.copyto(data, 4);
-    if (picture.save(raster_config.output) != 0)
-    {
-        //        std::cout << "save file error ." << rasterConfig.output << std::endl;
-        return;
-    }
+    return thumbnail_trimesh_2_picture(picture, buffer, mesh, aabb, width, height, index_2_color(color_index));
 }
 
-void thumbnail_trimesh_convert(trimesh::TriMesh* mesh, int width, int height, unsigned char* data, int stride, trimesh::vec3 viewDir, trimesh::vec3 viewRight)
+bool thumbnail_trimesh_2_picture(Picture* picture, ZBuffer* buffer, trimesh::TriMesh* mesh, const trimesh::box3& aabb, int width, int height, const trimesh::vec3& color)
 {
-    if (width <= 0 || height <= 0 || !data)
-        return;
-    int model_color_idx = 1;
-    if (model_color_idx < 0 || model_color_idx >= (int)(sizeof(model_colors) / sizeof(Vec3)))
+    std::vector<trimesh::vec3> triangles;
+    if (mesh)
     {
-        model_color_idx = rand() % 5;
+        for (const trimesh::TriMesh::Face& face : mesh->faces)
+        {
+            triangles.push_back(mesh->vertices.at(face.x));
+            triangles.push_back(mesh->vertices.at(face.y));
+            triangles.push_back(mesh->vertices.at(face.z));
+        }
     }
 
-    RasterConfig raster_config;
-    raster_config.output = "f:/test.png";
-    raster_config.picWidth = width;
-    raster_config.picHeight = height;
-    raster_config.modelColor = model_colors[model_color_idx];
-
-    //Front view
-    //raster_config.viewDir = Vec3(0.0f, 1.0f, 0.0f);
-    //raster_config.viewRight = Vec3(1.0f, 0.0f, 0.0f);
-
-    //vertical view
-    //raster_config.viewDir = Vec3(0.0f, 0.0f, -0.1f);
-    //raster_config.viewRight = Vec3(1.0f, 0.0f, 0.0f);
-
-    raster_config.viewDir = Vec3(viewDir.x, viewDir.y, viewDir.z);
-    raster_config.viewRight = Vec3(viewRight.x, viewRight.y, viewRight.z);
-    trimesh::vec3 up = trimesh::cross(viewDir, viewRight);
-    raster_config.viewUp = Vec3(up.x, up.y, up.z);
-
-    if (!mesh)
-    {
-        //std::cout << "mesh is null." << std::endl;
-        return;
-    }
-
-    Picture picture(raster_config.picWidth, raster_config.picHeight, stride); // 4:rgba
-    picture.setBg(nullptr, Vec4());
-
-    Raster raster;
-    if (!raster.rasterTriMesh(&picture, mesh, &raster_config))
-    {
-        //        std::cout << "raster error." << std::endl;
-        return;
-    }
-
-    picture.copyto(data, stride);
-    //if (picture.save(raster_config.output) != 0)
-    //{
-    //    //        std::cout << "save file error ." << rasterConfig.output << std::endl;
-    //    return;
-    //}
+    return thumbnail_triangles_2_picture(picture, buffer, triangles, aabb, width, height, color);
 }
 
-void thumbnail_trimeshes(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, unsigned char* data)
+bool thumbnail_triangles_2_picture_index(Picture* picture, ZBuffer* buffer, const std::vector<trimesh::vec3>& triangles, const trimesh::box3& aabb, int width, int height, int color_index)
 {
-    if (width <= 0 || height <= 0 || !data || meshes.size()==0)
-        return;
-    int model_color_idx = 1;
-    if (model_color_idx < 0 || model_color_idx >= (int)(sizeof(model_colors) / sizeof(Vec3)))
-    {
-        model_color_idx = rand() % 5;
-    }
-    if (meshes.size() > 1)
-    {
-        std::unique_ptr<trimesh::TriMesh> outMesh(mergeMeshes(meshes));
-        return thumbnail_trimesh(outMesh.get(), width, height, data);
-    }
-    return thumbnail_trimesh(meshes.at(0), width, height, data);
-    //RasterConfig raster_config;
-    //raster_config.output = "test.png";
-    //raster_config.picWidth = width;
-    //raster_config.picHeight = height;
-    //raster_config.modelColor = model_colors[model_color_idx];
-    ////    rasterConfig.viewDir = Vec3(-1.0f, -1.0f, -1.0f);
-    ////    rasterConfig.viewRight = Vec3(1.0f, -1.0f, 0.0f);
-
-    //Mesh mesh;
-    //_convert(meshes, mesh);
-
-    //if (0 == mesh.size())
-    //{
-    //    //std::cout << "mesh is null." << std::endl;
-    //    return;
-    //}
-
-    //Picture picture(raster_config.picWidth, raster_config.picHeight, 4); // 4:rgba
-    //picture.setBg(nullptr, Vec4());
-
-    //Raster raster;
-    //if (!raster.raster(&picture, &mesh, &raster_config))
-    //{
-    //    //        std::cout << "raster error." << std::endl;
-    //    return;
-    //}
-
-    //picture.copyto(data);
-    //if (picture.save(raster_config.output) != 0)
-    //{
-    //    //        std::cout << "save file error ." << rasterConfig.output << std::endl;
-    //    return;
-    //}
-}
-
-void thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, unsigned char* data)
-{
-	if (!mesh)
-		return;
-
-	//std::vector<trimesh::TriMesh*> meshes;
-	//meshes.push_back(mesh);
-
-	//thumbnail_trimeshes(meshes, width, height, data);
-
-    thumbnail_trimesh_convert(mesh, width, height, data);
-}
-
-void thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, unsigned char* data, int stride, trimesh::vec3 viewDir, trimesh::vec3 viewRight)//stride 3 RGB 4 RGBA ; 
-{
-    if (!mesh)
-        return;
-
-    thumbnail_trimesh_convert(mesh, width, height, data, stride, viewDir, viewRight);
-}
-
-bool thumbnail_trimesh_not_convert(trimesh::TriMesh* mesh, int width, int height, int model_color_idx, const char* filePath)
-{
-    if (width <= 0 || height <= 0 || !filePath)
-        return false;
-    if (model_color_idx < 0 || model_color_idx >= (int)(sizeof(model_colors) / sizeof(Vec3)))
-    {
-        model_color_idx = rand() % 5;
-    }
-
-    RasterConfig raster_config;
-    raster_config.output = filePath;
-    raster_config.picWidth = width;
-    raster_config.picHeight = height;
-    raster_config.modelColor = model_colors[model_color_idx];
-    //    rasterConfig.viewDir = Vec3(-1.0f, -1.0f, -1.0f);
-    //    rasterConfig.viewRight = Vec3(1.0f, -1.0f, 0.0f);
-
-    if (!mesh)
-    {
-        return false;
-    }
-
-    Picture picture(raster_config.picWidth, raster_config.picHeight, 4); // 4:rgba
-    picture.setBg(nullptr, Vec4());
-
-    Raster raster;
-    if (!raster.rasterTriMesh(&picture, mesh, &raster_config))
-    {
-        return false;
-    }
-    if (picture.save(raster_config.output) != 0)
-    {
-        //        std::cout << "save file error ." << rasterConfig.output << std::endl;
-        return false;
-    }
-    return true;
-}
-
-bool thumbnail_trimesh_not_convert_op(Picture* picture,const std::vector<trimesh::vec3>& triangles,const trimesh::box3& aabb, int width, int height, int model_color_idx, const char* filePath)
-{
-    if (!picture)
-    {
-        return false;
-    }
-
-    if (width <= 0 || height <= 0 || !filePath)
-        return false;
-    if (model_color_idx < 0 || model_color_idx >= (int)(sizeof(model_colors) / sizeof(Vec3)))
-    {
-        model_color_idx = rand() % 5;
-    }
-
-    RasterConfig raster_config;
-    raster_config.output = filePath;
-    raster_config.picWidth = width;
-    raster_config.picHeight = height;
-    raster_config.modelColor = model_colors[model_color_idx];
-    //    rasterConfig.viewDir = Vec3(-1.0f, -1.0f, -1.0f);
-    //    rasterConfig.viewRight = Vec3(1.0f, -1.0f, 0.0f);
-
-    if (triangles.empty())
-    {
-        return false;
-    }
-
-    //Picture picture(raster_config.picWidth, raster_config.picHeight, 4); // 4:rgba
-    //picture.setBg(nullptr, Vec4());
-
-    Raster raster;
-    if (!raster.rasterTriangle(picture, triangles,aabb, &raster_config))
-    {
-        return false;
-    }
-    if (picture->save(raster_config.output) != 0)
-    {
-        //        std::cout << "save file error ." << rasterConfig.output << std::endl;
-        return false;
-    }
-    return true;
+    return thumbnail_triangles_2_picture(picture, buffer, triangles, aabb, width, height, index_2_color(color_index));
 }
 
 bool thumbnail_triangles_2_picture(Picture* picture, ZBuffer* buffer, const std::vector<trimesh::vec3>& triangles, const trimesh::box3& aabb, int width, int height, const trimesh::vec3& color)
@@ -396,56 +185,6 @@ bool thumbnail_triangles_2_picture(Picture* picture, ZBuffer* buffer, const std:
         return true;
 
     return false;
-}
-
-bool thumbnail_trimeshs(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, int model_color_idx,const char* filePath)
-{
-    if (width <= 0 || height <= 0 || !filePath || meshes.size()==0)
-        return false;
-      if (model_color_idx < 0 || model_color_idx >= (int)(sizeof(model_colors) / sizeof(Vec3)))
-        {
-            model_color_idx = rand() % 5;
-        }
-      if (meshes.size() > 1)
-      {
-          std::unique_ptr<trimesh::TriMesh> outMesh(mergeMeshes(meshes));
-          return thumbnail_trimesh_not_convert(outMesh.get(), width, height, model_color_idx, filePath);
-      }
-      return thumbnail_trimesh_not_convert(meshes.at(0), width, height, model_color_idx, filePath);
-
-    //RasterConfig raster_config;
-    //raster_config.output = filePath;
-    //raster_config.picWidth = width;
-    //raster_config.picHeight = height;
-    //raster_config.modelColor = model_colors[model_color_idx];
-    ////    rasterConfig.viewDir = Vec3(-1.0f, -1.0f, -1.0f);
-    ////    rasterConfig.viewRight = Vec3(1.0f, -1.0f, 0.0f);
-    //Mesh mesh;
-    //_convert(meshes, mesh);
-
-    //if (0 == mesh.size())
-    //{
-    //    return false;
-    //}
-
-    //Picture picture(raster_config.picWidth, raster_config.picHeight, 4); // 4:rgba
-    //picture.setBg(nullptr, Vec4());
-
-    //Raster raster;
-    //if (!raster.raster(&picture, &mesh, &raster_config))
-    //{
-    //    return false;
-    //}
-    //if (picture.save(raster_config.output) != 0)
-    //{
-    //    //        std::cout << "save file error ." << rasterConfig.output << std::endl;
-    //    return false;
-    //}
-    //return true;
-}
-bool  thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, int model_color_idx, const char* filePath)
-{
-    return thumbnail_trimesh_not_convert(mesh, width, height, model_color_idx,filePath);
 }
 
 int thumbnail_to_getSE(const char* infilePath, int& s, int& e)
@@ -494,7 +233,7 @@ void getImageStr(std::string& imageStr, std::string imgSavePath, std::string img
         copy(s.begin(), s.end(), data.begin() + src_size);
     }
     ios.clear();
-    ios.close();  // ¹Ø±ÕÎÄ¼þ  
+    ios.close();
     data.pop_back();
     std::vector<std::string> outStr;
     std::string imgPixelSE;
@@ -509,6 +248,52 @@ void getImageStr(std::string& imageStr, std::string imgSavePath, std::string img
     }
 }
 
+bool thumbnail_trimeshes(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, const trimesh::vec3& color, const std::string& out)
+{
+    if (meshes.size() == 0)
+        return false;
+
+    Picture picture(width, height, 4);
+    ZBuffer zbuffer(width, height);
+
+    picture.setBg(nullptr, Vec4());
+    zbuffer.setTestMethod(true);
+
+    trimesh::box3 box;
+    for (trimesh::TriMesh* mesh : meshes)
+    {
+        mesh->clear_bbox();
+        mesh->need_bbox();
+        box += mesh->bbox;
+    }
+    for (trimesh::TriMesh* mesh : meshes)
+    {
+        thumbnail_trimesh_2_picture(&picture, &zbuffer, mesh, box, width, height, color);
+    }
+    picture.save(out);
+    return true;
+}
+
+bool thumbnail_trimeshes_index(const std::vector<trimesh::TriMesh*>& meshes, int width, int height, int color_index, const std::string& out)
+{
+    return thumbnail_trimeshes(meshes, width, height, index_2_color(color_index), out);
+}
+
+bool thumbnail_trimesh(trimesh::TriMesh* mesh, int width, int height, const trimesh::vec3& color, const std::string& out)
+{
+    if (!mesh)
+        return false;
+
+    std::vector<trimesh::TriMesh*> meshes;
+    meshes.push_back(mesh);
+    return thumbnail_trimeshes(meshes, width, height, color, out);
+}
+
+bool thumbnail_trimesh_index(trimesh::TriMesh* mesh, int width, int height, int color_index, const std::string& out)
+{
+    return thumbnail_trimesh(mesh, width, height, index_2_color(color_index), out);
+}
+
 bool thumbnail_trimeshs_gcode_head(const std::vector<trimesh::TriMesh*>& meshes, const float layer_height, const int layer_num, const std::string preImgFormat, int width, int height, int model_color_idx
     , std::string& out)
 {
@@ -519,7 +304,7 @@ bool thumbnail_trimeshs_gcode_head(const std::vector<trimesh::TriMesh*>& meshes,
     std::string previewImagePath = "test." + preImgFormat;
     std::string imgSize = std::to_string(width) + "*" + std::to_string(height);
     std::string previewImageDataString;
-    thumbnail_trimeshs(meshes, width, height, model_color_idx, previewImagePath.c_str());
+    thumbnail_trimeshes_index(meshes, width, height, model_color_idx, previewImagePath.c_str());
     getImageStr(previewImageDataString, previewImagePath, imgSize, preImgFormat, layer_num, layer_height);
     if (!previewImageDataString.empty())
     {
