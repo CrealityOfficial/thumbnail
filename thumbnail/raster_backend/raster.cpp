@@ -442,7 +442,7 @@ bool Raster::rasterTriangles(Picture* picture, ZBuffer* zbuffer, const std::vect
                 glm::vec2 V1 = glm::vec2(v1);
                 glm::vec2 V2 = glm::vec2(v2);
 
-#if SWAP_STL_01
+#if 1
                 bool inside = true;
                 float f = edgeFunction(P, V0, V1);
                 inside &= (f <= FLT_EPSILON); // ¼´f <= 0.0f
