@@ -30,4 +30,8 @@ THUMBNAIL_API bool thumbnail_to_gcode(const std::vector<unsigned char>& inPrevDa
 THUMBNAIL_API bool thumbnail_image2base64(const std::vector<unsigned char>& inPrevData, const std::string& inImgSizes, const std::string& inImgFormat, std::vector<std::string>& outGcodeStr);
 THUMBNAIL_API bool thumbnail_base2image(const std::vector<std::string>& inPrevData, std::vector<unsigned char>& outGcodeStr);
 
+//ÔÆÇÐÆ¬µ÷ÓÃ
+THUMBNAIL_API bool thumbnail_trimeshs_gcode_head(const std::vector<trimesh::TriMesh*>& meshes, const float layer_height, const int layer_num, const std::string preImgFormat, int width, int height, int model_color_idx
+    , std::string& out);
+
 #endif // _THUMBNAIL_1635927924764_H
