@@ -58,6 +58,6 @@ if(INSTALL_THUMBNAIL)
 				DESTINATION ${CMAKE_INSTALL_PREFIX}/include/thumbnail/)
 endif()
 
-if(CC_INSTALL_THUMBNAIL)
+if(CC_INSTALL_THUMBNAIL_STATIC)
 	__install_directory_specif(${CMAKE_CURRENT_SOURCE_DIR}/thumbnail thumbnail)
 endif()
