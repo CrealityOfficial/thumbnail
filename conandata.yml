@@ -5,5 +5,5 @@ repository: http://172.20.180.12:8050/yanfa4/thirdparty/thumbnail
 external_repository: https://github.com/CrealityOfficial/thumbnail
 description: thumbnail
 topics: thumbnail
-build_deps: trimesh2/0.0.3,png_static/1.0.0
+build_deps: trimesh2/0.0.3,png_static/1.0.0,glm/0.0.1
 search_deps: trimesh2/0.0.3,png_static/1.0.0
