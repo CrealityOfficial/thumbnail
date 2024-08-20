@@ -35,6 +35,8 @@ public:
     void setBg(const char* bg_file_path, const Vec4& bg_color = Vec4());
 
     int save(const std::string& file_path);
+    void flip();
+    
     void setRGB(size_t x, size_t y, float r, float g, float b, float a = 1.0f);
 
     size_t width()

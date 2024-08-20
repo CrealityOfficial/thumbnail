@@ -187,6 +187,33 @@ int Picture::save(const std::string& file_path)
     return 0;
 }
 
+void Picture::flip()
+{
+    Buffer tmp = buffer_;
+    for (size_t y = 0; y < height_; ++y)
+    {
+        memcpy(&buffer_[y * stride_], &tmp[(height_ - y - 1) * stride_], stride_);
+    }
+
+        // auto f_revert = [](unsigned char* data, int width, int height) {
+        //     if (!data || (width <= 0) || (height <= 0))
+        //         return;
+
+        //     int len = 4 * width;
+        //     unsigned char* t = new unsigned char[len];
+        //     int haf = height / 2;
+        //     for (int i = 0; i < haf; ++i)
+        //     {
+        //         unsigned char* src_data = data + len * i;
+        //         unsigned char* dst_data = data + len * (height - 1 - i);
+        //         memcpy(t, src_data, len);
+        //         memcpy(src_data, dst_data, len);
+        //         memcpy(dst_data, t, len);
+        //     }
+        //     delete []t;
+        // };
+}
+
 void Picture::setRGB(size_t x, size_t y, float r, float g, float b, float a)
 {
     setRGB(x, y, floatToByte(r), floatToByte(g), floatToByte(b), floatToByte(a));

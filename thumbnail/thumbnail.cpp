@@ -270,6 +270,8 @@ bool thumbnail_trimeshes(const std::vector<trimesh::TriMesh*>& meshes, int width
     {
         thumbnail_trimesh_2_picture(&picture, &zbuffer, mesh, box, width, height, color);
     }
+
+    picture.flip();
     picture.save(out);
     return true;
 }
